@@ -121,8 +121,8 @@ func (b *bbServiceDiscovery) watcher(serName string) {
 }
 
 func (b *bbServiceDiscovery) setServiceList(key string, value string) {
-	b.Lock()
-	defer b.Unlock()
+	b.RLock()
+	defer b.RUnlock()
 	delete(b.serverList, key)
 	b.serverList[key] = value
 }
