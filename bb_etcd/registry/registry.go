@@ -70,12 +70,12 @@ func (b *bbServiceRegistry) Register(serverName, serverHost string, serverPort i
 	go func() {
 		for ka := range keepaliveChan {
 			if ka == nil {
-				// todo 可添加自动检测
+				// todo you can add some function for check if down
 				for _, v := range f {
 					v()
 				}
 			}
-			fmt.Println("续约:", ka.ID, time.Now().Format("2006-01-02 15:04:05"))
+			fmt.Println("renew:", ka.ID, time.Now().Format("2006-01-02 15:04:05"))
 		}
 	}()
 	return nil

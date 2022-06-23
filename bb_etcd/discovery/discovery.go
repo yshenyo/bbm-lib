@@ -14,7 +14,6 @@ import (
 	"go.etcd.io/etcd/clientv3"
 )
 
-//server name = "serverName/host/port"
 type bbServiceDiscovery struct {
 	cli        *clientv3.Client  //etcd client
 	serverList map[string]string //map[serverName]string
@@ -112,9 +111,9 @@ func (b *bbServiceDiscovery) watcher(serName string) {
 	for wresp := range rch {
 		for _, ev := range wresp.Events {
 			switch ev.Type {
-			case mvccpb.PUT: //修改或者新增
+			case mvccpb.PUT:
 				b.setServiceList(string(ev.Kv.Key), string(ev.Kv.Value))
-			case mvccpb.DELETE: //删除
+			case mvccpb.DELETE:
 				b.deleteServiceList(string(ev.Kv.Key))
 			}
 		}
