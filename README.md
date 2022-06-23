@@ -1,6 +1,6 @@
 # ZheJiangBoBing Teach  Library
 
-## Getting etcd
+### Getting start
 
 ```
 go get  "github.com/zjbobingtech/bbm_lib"
