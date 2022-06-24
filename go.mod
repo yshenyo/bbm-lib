@@ -1,4 +1,4 @@
-module bbm_lib
+module  github.com/zjbobingtech/bbm_lib
 
 go 1.16
 

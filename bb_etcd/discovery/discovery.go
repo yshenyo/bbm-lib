@@ -8,9 +8,9 @@ import (
 	"sync"
 	"time"
 
-	"bbm_lib/bb_etcd"
-	"bbm_lib/utils/connect"
 	"github.com/coreos/etcd/mvcc/mvccpb"
+	"github.com/zjbobingtech/bbm_lib/bb_etcd"
+	"github.com/zjbobingtech/bbm_lib/utils/connect"
 	"go.etcd.io/etcd/clientv3"
 )
 

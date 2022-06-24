@@ -12,7 +12,7 @@ import (
 	"strconv"
 	"strings"
 
-	"bbm_lib/utils/encryption"
+	"github.com/zjbobingtech/bbm_lib/utils/encryption"
 	"gopkg.in/gomail.v2"
 )
 

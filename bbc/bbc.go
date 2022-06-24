@@ -12,8 +12,8 @@ import (
 	"strings"
 	"time"
 
-	"bbm_lib/utils/encryption"
 	"github.com/spf13/cast"
+	"github.com/zjbobingtech/bbm_lib/utils/encryption"
 	"go.uber.org/zap"
 	"gorm.io/datatypes"
 )
