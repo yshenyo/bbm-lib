@@ -7,6 +7,7 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"sort"
 	"strings"
 )
 
@@ -43,6 +44,14 @@ func PasswordDecode(data string) string {
 
 func PasswordEncode(data string) (str string, err error) {
 	return EncodeWithCheck(data)
+}
+
+func DecodeWitchCheck(data string) string {
+	str, err := Decode(data)
+	if err != nil {
+		return data
+	}
+	return str
 }
 
 func Decode(data string) (str string, err error) {
@@ -133,4 +142,59 @@ func PasswordMd5(password string) (p string) {
 	wStr := fmt.Sprintf("%x", word)
 	p = strings.ToUpper(pStr[0:16] + wStr[16:])
 	return p
+}
+
+func ByteToMd5(b []byte) (m string) {
+	md := md5.New()
+	md.Write(b)
+	return hex.EncodeToString(md.Sum(nil))
+}
+
+const SeparatorByte byte = 255
+
+func labelSetToFingerprint(ls map[string]string) uint64 {
+	if len(ls) == 0 {
+		return hashNew()
+	}
+
+	labelNames := make([]string, 0, len(ls))
+	for labelName := range ls {
+		labelNames = append(labelNames, labelName)
+	}
+	sort.Strings(labelNames)
+
+	sum := hashNew()
+	for _, labelName := range labelNames {
+		sum = hashAdd(sum, string(labelName))
+		sum = hashAddByte(sum, SeparatorByte)
+		sum = hashAdd(sum, string(ls[labelName]))
+		sum = hashAddByte(sum, SeparatorByte)
+	}
+	return sum
+}
+
+const (
+	offset64 = 14695981039346656037
+	prime64  = 1099511628211
+)
+
+// hashNew initializes a new fnv64a hash value.
+func hashNew() uint64 {
+	return offset64
+}
+
+// hashAdd adds a string to a fnv64a hash value, returning the updated hash.
+func hashAdd(h uint64, s string) uint64 {
+	for i := 0; i < len(s); i++ {
+		h ^= uint64(s[i])
+		h *= prime64
+	}
+	return h
+}
+
+// hashAddByte adds a byte to a fnv64a hash value, returning the updated hash.
+func hashAddByte(h uint64, b byte) uint64 {
+	h ^= uint64(b)
+	h *= prime64
+	return h
 }
