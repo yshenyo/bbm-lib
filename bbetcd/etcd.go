@@ -1,4 +1,4 @@
-package bb_etcd
+package bbetcd
 
 import "fmt"
 

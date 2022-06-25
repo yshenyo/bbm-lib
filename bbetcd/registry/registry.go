@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/zjbobingtech/bbm-lib/bb_etcd"
+	"github.com/zjbobingtech/bbm-lib/bbetcd"
 	"github.com/zjbobingtech/bbm-lib/utils/connect"
 	"go.etcd.io/etcd/clientv3"
 )
@@ -45,8 +45,8 @@ func (b *bbServiceRegistry) Register(serverName, serverHost string, serverPort i
 		return err
 	}
 	b.leaseID = lease.ID
-	key := bb_etcd.GetEtcdKey(serverName, serverHost, serverPort)
-	serverData := bb_etcd.ServerData{
+	key := bbetcd.GetEtcdKey(serverName, serverHost, serverPort)
+	serverData := bbetcd.ServerData{
 		ServerName: serverName,
 		Host:       serverHost,
 		Port:       serverPort,

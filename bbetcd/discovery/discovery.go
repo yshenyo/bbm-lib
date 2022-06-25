@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/coreos/etcd/mvcc/mvccpb"
-	"github.com/zjbobingtech/bbm-lib/bb_etcd"
+	"github.com/zjbobingtech/bbm-lib/bbetcd"
 	"github.com/zjbobingtech/bbm-lib/utils/connect"
 	"go.etcd.io/etcd/clientv3"
 )
@@ -41,9 +41,9 @@ func NewBBService(endpoints []string) (BBEtcdDiscoveryInterface, error) {
 
 type BBEtcdDiscoveryInterface interface {
 	NewClientService(serverName string) error
-	ServerAllList() (list map[string]bb_etcd.ServerData)
-	ServerList(serverName string) (list []bb_etcd.ServerData)
-	GetServer(serverName string) (server bb_etcd.ServerData, err error)
+	ServerAllList() (list map[string]bbetcd.ServerData)
+	ServerList(serverName string) (list []bbetcd.ServerData)
+	GetServer(serverName string) (server bbetcd.ServerData, err error)
 	Close() error
 
 	watchService(serverNamePrefix string) error
@@ -55,20 +55,20 @@ func (b *bbServiceDiscovery) NewClientService(serverName string) error {
 	return b.watchService(serverName)
 }
 
-func (b *bbServiceDiscovery) ServerAllList() (list map[string]bb_etcd.ServerData) {
-	list = make(map[string]bb_etcd.ServerData)
+func (b *bbServiceDiscovery) ServerAllList() (list map[string]bbetcd.ServerData) {
+	list = make(map[string]bbetcd.ServerData)
 	for k, v := range b.serverList {
-		tmp := bb_etcd.ServerData{}
+		tmp := bbetcd.ServerData{}
 		_ = json.Unmarshal([]byte(v), &tmp)
 		list[k] = tmp
 	}
 	return
 }
 
-func (b *bbServiceDiscovery) ServerList(serverName string) (list []bb_etcd.ServerData) {
+func (b *bbServiceDiscovery) ServerList(serverName string) (list []bbetcd.ServerData) {
 	for k, v := range b.serverList {
 		if k == serverName {
-			tmp := bb_etcd.ServerData{}
+			tmp := bbetcd.ServerData{}
 			_ = json.Unmarshal([]byte(v), &tmp)
 			list = append(list, tmp)
 		}
@@ -76,10 +76,10 @@ func (b *bbServiceDiscovery) ServerList(serverName string) (list []bb_etcd.Serve
 	return
 }
 
-func (b *bbServiceDiscovery) GetServer(serverName string) (server bb_etcd.ServerData, err error) {
+func (b *bbServiceDiscovery) GetServer(serverName string) (server bbetcd.ServerData, err error) {
 	for k, v := range b.serverList {
 		if k == serverName {
-			tmp := bb_etcd.ServerData{}
+			tmp := bbetcd.ServerData{}
 			_ = json.Unmarshal([]byte(v), &tmp)
 			if err = connect.TelnetIPPort(tmp.Host, tmp.Port); err != nil {
 				log.Printf("%v", err)
