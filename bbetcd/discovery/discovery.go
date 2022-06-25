@@ -77,6 +77,7 @@ func (b *bbServiceDiscovery) ServerList(serverName string) (list []bbetcd.Server
 }
 
 func (b *bbServiceDiscovery) GetServer(serverName string) (server bbetcd.ServerData, err error) {
+	// todo random
 	for k, v := range b.serverList {
 		if k == serverName {
 			tmp := bbetcd.ServerData{}
