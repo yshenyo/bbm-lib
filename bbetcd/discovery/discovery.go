@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"math/rand"
 	"sync"
 	"time"
 
@@ -77,7 +78,7 @@ func (b *bbServiceDiscovery) ServerList(serverName string) (list []bbetcd.Server
 }
 
 func (b *bbServiceDiscovery) GetServer(serverName string) (server bbetcd.ServerData, err error) {
-	// todo random
+	usedServerList := []bbetcd.ServerData{}
 	for k, v := range b.serverList {
 		if k == serverName {
 			tmp := bbetcd.ServerData{}
@@ -86,10 +87,16 @@ func (b *bbServiceDiscovery) GetServer(serverName string) (server bbetcd.ServerD
 				log.Printf("%v", err)
 				continue
 			}
-			return tmp, nil
+			usedServerList = append(usedServerList, tmp)
 		}
 	}
-	return server, fmt.Errorf("serverName %v not exist", serverName)
+	if len(usedServerList) == 0 {
+		return server, fmt.Errorf("serverName %v not exist", serverName)
+	}
+
+	rand.Seed(time.Now().UnixNano())
+	randKey := rand.Intn(len(usedServerList))
+	return usedServerList[randKey], nil
 }
 
 func (b *bbServiceDiscovery) watchService(serverName string) error {
