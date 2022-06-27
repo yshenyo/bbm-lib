@@ -12,8 +12,8 @@ import (
 )
 
 type bbServiceRegistry struct {
-	etcdClient *clientv3.Client //etcd client
-	leaseID    clientv3.LeaseID
+	Cli     *clientv3.Client //etcd client
+	leaseID clientv3.LeaseID
 }
 
 func NewBBService(endpoints []string) (BBEtcdRegistryInterface, error) {
@@ -30,7 +30,7 @@ func NewBBService(endpoints []string) (BBEtcdRegistryInterface, error) {
 		return nil, err
 	}
 	return &bbServiceRegistry{
-		etcdClient: cli,
+		Cli: cli,
 	}, nil
 }
 
@@ -40,7 +40,7 @@ type BBEtcdRegistryInterface interface {
 }
 
 func (b *bbServiceRegistry) Register(serverName, serverHost string, serverPort int, f ...func()) error {
-	lease, err := b.etcdClient.Grant(context.Background(), 15)
+	lease, err := b.Cli.Grant(context.Background(), 15)
 	if err != nil {
 		return err
 	}
@@ -57,12 +57,12 @@ func (b *bbServiceRegistry) Register(serverName, serverHost string, serverPort i
 	}
 	value := string(serverDataByte[:])
 
-	_, err = b.etcdClient.Put(context.Background(), key, value, clientv3.WithLease(lease.ID))
+	_, err = b.Cli.Put(context.Background(), key, value, clientv3.WithLease(lease.ID))
 	if err != nil {
 		return err
 	}
 
-	keepaliveChan, err := b.etcdClient.KeepAlive(context.Background(), lease.ID)
+	keepaliveChan, err := b.Cli.KeepAlive(context.Background(), lease.ID)
 	if err != nil {
 		return err
 	}
@@ -82,7 +82,7 @@ func (b *bbServiceRegistry) Register(serverName, serverHost string, serverPort i
 }
 
 func (b *bbServiceRegistry) Revoke() error {
-	if _, err := b.etcdClient.Revoke(context.Background(), b.leaseID); err != nil {
+	if _, err := b.Cli.Revoke(context.Background(), b.leaseID); err != nil {
 		return err
 	}
 	return nil

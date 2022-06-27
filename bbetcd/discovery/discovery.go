@@ -16,7 +16,7 @@ import (
 )
 
 type bbServiceDiscovery struct {
-	cli        *clientv3.Client  //etcd client
+	Cli        *clientv3.Client  //etcd client
 	serverList map[string]string //map[serverName]string
 	sync.RWMutex
 }
@@ -35,7 +35,7 @@ func NewBBService(endpoints []string) (BBEtcdDiscoveryInterface, error) {
 		return nil, err
 	}
 	return &bbServiceDiscovery{
-		cli:        cli,
+		Cli:        cli,
 		serverList: make(map[string]string),
 	}, nil
 }
@@ -100,7 +100,7 @@ func (b *bbServiceDiscovery) GetServer(serverName string) (server bbetcd.ServerD
 }
 
 func (b *bbServiceDiscovery) watchService(serverName string) error {
-	resp, err := b.cli.Get(context.Background(), serverName, clientv3.WithPrefix())
+	resp, err := b.Cli.Get(context.Background(), serverName, clientv3.WithPrefix())
 	if err != nil {
 		return err
 	}
@@ -115,7 +115,7 @@ func (b *bbServiceDiscovery) watchService(serverName string) error {
 }
 
 func (b *bbServiceDiscovery) watcher(serName string) {
-	rch := b.cli.Watch(context.Background(), serName, clientv3.WithPrefix())
+	rch := b.Cli.Watch(context.Background(), serName, clientv3.WithPrefix())
 	for wresp := range rch {
 		for _, ev := range wresp.Events {
 			switch ev.Type {
@@ -142,5 +142,5 @@ func (b *bbServiceDiscovery) deleteServiceList(key string) {
 }
 
 func (b *bbServiceDiscovery) Close() error {
-	return b.cli.Close()
+	return b.Cli.Close()
 }
