@@ -11,5 +11,5 @@ type ServerData struct {
 const BBMEtcdSchema = "bbm_etcd"
 
 func GetEtcdKey(serverName, serverHost string, serverPort int) string {
-	return fmt.Sprintf("%v/%v/%v/%v/%v", BBMEtcdSchema, serverName, serverHost, serverHost, serverPort)
+	return fmt.Sprintf("%v/%v/%v/%v", BBMEtcdSchema, serverName, serverHost, serverPort)
 }
