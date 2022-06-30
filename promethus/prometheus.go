@@ -37,9 +37,18 @@ func (prom PrometheusResult) UnmarshalBinary(data []byte) error {
 	return json.Unmarshal(data, &prom)
 }
 
+var globalTransport *http.Transport
+
+func init() {
+	globalTransport = &http.Transport{}
+}
+
 func (prom Prometheus) Query(class string, query string, monitorServerUrl string) (result PrometheusResult, err error) {
 	urlStr := fmt.Sprintf("%s/api/v1/%s?%s", monitorServerUrl, class, query)
-	res, err := http.Get(urlStr)
+	client := http.Client{
+		Transport: globalTransport,
+	}
+	res, err := client.Get(urlStr)
 	if err != nil {
 		return result, fmt.Errorf("query from monitor error %v %v", zap.String("url", urlStr), zap.String("err", err.Error()))
 	}
