@@ -5,12 +5,14 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/elastic/go-elasticsearch/v7"
 	"github.com/elastic/go-elasticsearch/v7/esapi"
 	"github.com/google/uuid"
 	"github.com/zjbobingtech/bbm-lib/utils"
+	"github.com/zjbobingtech/bbm-lib/utils/connect"
 )
 
 // elasticsearch:7.4.2
@@ -31,7 +33,7 @@ func init() {
 		for {
 			select {
 			case v := <-logChan:
-				v.pushLogEs()
+				go v.pushLogEs()
 			}
 		}
 	}()
@@ -39,9 +41,28 @@ func init() {
 
 // PushLogs push log to es
 // If indexName does not exist, use the default value
+// Addresses ps: http://127.0.0.1:9200
 func PushLogs(logData string, addresses []string, options ...EsLogOption) {
+	var usedAddresses []string
+	for _, addr := range addresses {
+		var telAddres string
+		if strings.Contains(addr, "http://") {
+			telAddres = strings.Replace(addr, "http://", "", -1)
+		} else if strings.Contains(addr, "https://") {
+			telAddres = strings.Replace(addr, "https://", "", -1)
+		}
+		if telAddres == "" {
+			continue
+		}
+		if err := connect.TelnetAddress(telAddres); err == nil {
+			usedAddresses = append(usedAddresses, addr)
+		}
+	}
+	if len(usedAddresses) == 0 {
+		return
+	}
 	esLog := bbEsLog{
-		Addresses: addresses,
+		Addresses: usedAddresses,
 	}
 	esLog.IndexName = esLogIndexPre + utils.GetLocalIp()
 	if len(options) != 0 {
