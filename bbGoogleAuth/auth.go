@@ -5,6 +5,7 @@ import (
 	"crypto/rand"
 	"crypto/sha1"
 	"encoding/base32"
+	"fmt"
 	"strings"
 	"time"
 )
@@ -35,6 +36,10 @@ func VerifyCode(secret string, code int32) (bool, error) {
 		}
 	}
 	return false, nil
+}
+
+func GetSecretQrcode(user string) string {
+	return fmt.Sprintf("otpauth://totp/%s?secret=%s", user, GetSecret())
 }
 
 func randStr(strSize int) string {
