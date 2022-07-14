@@ -38,8 +38,9 @@ func VerifyCode(secret string, code int32) (bool, error) {
 	return false, nil
 }
 
-func GetSecretQrcode(user string) string {
-	return fmt.Sprintf("otpauth://totp/%s?secret=%s", user, GetSecret())
+func GetSecretQrcode(user string) (string, string) {
+	secret := GetSecret()
+	return fmt.Sprintf("otpauth://totp/%s?secret=%s", user, secret), secret
 }
 
 func randStr(strSize int) string {
