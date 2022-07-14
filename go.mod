@@ -15,11 +15,13 @@ require (
 	github.com/elastic/go-elasticsearch/v7 v7.17.1 // indirect
 	github.com/envoyproxy/go-control-plane v0.9.1-0.20191026205805-5f8ba28d4473 // indirect
 	github.com/gin-gonic/gin v1.8.1
+	github.com/go-redis/redis v6.15.9+incompatible // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/mholt/archiver/v3 v3.5.1 // indirect
 	github.com/miekg/dns v1.1.50
+	github.com/mojocn/base64Captcha v1.3.5 // indirect
 	github.com/pkg/sftp v1.13.5 // indirect
 	github.com/spf13/cast v1.5.0
 	go.etcd.io/etcd v3.3.27+incompatible // indirect
