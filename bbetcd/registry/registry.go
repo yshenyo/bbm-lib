@@ -3,7 +3,6 @@ package registry
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"time"
 
 	"github.com/zjbobingtech/bbm-lib/bbetcd"
@@ -75,7 +74,7 @@ func (b *bbServiceRegistry) Register(serverName, serverHost string, serverPort i
 					v()
 				}
 			}
-			fmt.Println("renew:", ka.ID, time.Now().Format("2006-01-02 15:04:05"))
+			//fmt.Println("renew:", ka.ID, time.Now().Format("2006-01-02 15:04:05"))
 		}
 	}()
 	return nil

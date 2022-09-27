@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"math/rand"
+	"strings"
 	"sync"
 	"time"
 
@@ -68,7 +69,7 @@ func (b *bbServiceDiscovery) ServerAllList() (list map[string]bbetcd.ServerData)
 
 func (b *bbServiceDiscovery) ServerList(serverName string) (list []bbetcd.ServerData) {
 	for k, v := range b.serverList {
-		if k == serverName {
+		if strings.Contains(k, serverName) {
 			tmp := bbetcd.ServerData{}
 			_ = json.Unmarshal([]byte(v), &tmp)
 			list = append(list, tmp)
@@ -80,7 +81,7 @@ func (b *bbServiceDiscovery) ServerList(serverName string) (list []bbetcd.Server
 func (b *bbServiceDiscovery) GetServer(serverName string) (server bbetcd.ServerData, err error) {
 	usedServerList := []bbetcd.ServerData{}
 	for k, v := range b.serverList {
-		if k == serverName {
+		if strings.Contains(k, serverName) {
 			tmp := bbetcd.ServerData{}
 			_ = json.Unmarshal([]byte(v), &tmp)
 			if err = connect.TelnetIPPort(tmp.Host, tmp.Port); err != nil {
@@ -93,13 +94,13 @@ func (b *bbServiceDiscovery) GetServer(serverName string) (server bbetcd.ServerD
 	if len(usedServerList) == 0 {
 		return server, fmt.Errorf("serverName %v not exist", serverName)
 	}
-
 	rand.Seed(time.Now().UnixNano())
 	randKey := rand.Intn(len(usedServerList))
 	return usedServerList[randKey], nil
 }
 
 func (b *bbServiceDiscovery) watchService(serverName string) error {
+	serverName = bbetcd.GetEtcdPrefix(serverName)
 	resp, err := b.Cli.Get(context.Background(), serverName, clientv3.WithPrefix())
 	if err != nil {
 		return err
